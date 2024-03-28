@@ -1,17 +1,25 @@
-## INTRODUCTION
+# E-Commerce Application
 
-The project is called "e-commerce" and aims to build a very basic version of Amazon or Flipkart to understand basic functionalities.  
-The project will require building a user interface (UI) and a back-end logic to handle user interactions.  
-The UI should have features such as a logo, search bar, login, cart.  
-The user can click on clickable areas of the UI to perform actions, and the back-end logic will handle these actions.  
+## Description
+This project is an E-Commerce application built using JavaFX for the frontend and MySQL for the backend database. It offers essential functionalities such as browsing products, adding them to the cart and placing orders. The application provides a user-friendly interface for customers to interact with the online store seamlessly.
 
-## Requirements
+## Key Features
+- User authentication and login system.
+- Product browsing and searching functionality.
+- Adding products to the shopping cart and managing the cart.
+- Placing orders.
+  
+## Technologies Used
+- JavaFX: For building the graphical user interface.
+- MySQL: For storing product and order data.
+- JDBC: For database connectivity.
+- IntelliJ IDEA: Integrated Development Environment used for development.
+- Git: Version control system for collaboration and code management.
 
-User Interface done in JavaFX.  
-Backend/Business Logic is done in Java.  
-Databases is made in MySQL Workbench.  
+## Project Structure
+- `src/com/example/ecommerce`: Contains the Java source code for the application.
+- `database`: Includes SQL scripts for setting up the database schema.
+- `README.md`: Provides instructions for setting up and running the application.
 
-## Technologies used
-
-Java   
-Java Swing
+## Project Status
+This project is currently in development. Contributions and feedback are welcome.
