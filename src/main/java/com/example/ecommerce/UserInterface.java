@@ -1,6 +1,8 @@
 package com.example.ecommerce;
 
+import javafx.scene.control.Alert;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -23,7 +25,7 @@ public class UserInterface {
     HBox headerBar;
     HBox footerBar;
     VBox body;
-    VBox productPage;
+  //  VBox productPage;
     ObservableList<Product> itemsInCart= FXCollections.observableArrayList();//for products getting selected
     private VBox productListWithPagination;
     private static final int ITEMS_PER_PAGE = 15;
@@ -76,11 +78,11 @@ public class UserInterface {
 
         //typing text field
         TextField userName=new TextField();//placeholder
-        userName.setText("yashas.me18@sahyadri.edu.in");//placeholder
+        userName.setText("user@gmail.com");//placeholder
         userName.setPromptText("Type user-name here");
 
         PasswordField password=new PasswordField();
-        password.setText("mangalore");
+        password.setText("user");
         password.setPromptText("Type password here");
         Label messageLabel=new Label("");
         //login button
@@ -126,7 +128,127 @@ public class UserInterface {
                 }
             }
         });
+
+        // New user button
+        Button newUserButton = new Button("New User");
+
+        newUserButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                // Create a new dialog or form to get user details
+                // For simplicity, let's assume you have a method to create a dialog for new user registration
+                showNewUserRegistrationDialog();
+            }
+        });
+
+        // Add the new user button to the login page
+        loginPage.add(newUserButton, 1, 3);
     }
+    private void showNewUserRegistrationDialog() {
+        // Create a dialog or form to get user details for registration
+        Dialog newUserDialog = new Dialog();
+        newUserDialog.setTitle("New User Registration");
+
+        // Create text fields for user details
+        TextField nameField = new TextField();
+        TextField emailField = new TextField();
+        PasswordField passwordField = new PasswordField();
+        TextField mobileField = new TextField();
+        TextField addressField = new TextField(); // Address field added
+
+        // Create labels for text fields
+        Label nameLabel = new Label("Name:");
+        Label emailLabel = new Label("Email:");
+        Label passwordLabel = new Label("Password:");
+        Label mobileLabel = new Label("Mobile:");
+        Label addressLabel = new Label("Address (Optional):"); // Address label added
+
+        // Add labels and text fields to the dialog
+        GridPane gridPane = new GridPane();
+        gridPane.add(nameLabel, 0, 0);
+        gridPane.add(nameField, 1, 0);
+        gridPane.add(emailLabel, 0, 1);
+        gridPane.add(emailField, 1, 1);
+        gridPane.add(passwordLabel, 0, 2);
+        gridPane.add(passwordField, 1, 2);
+        gridPane.add(mobileLabel, 0, 3);
+        gridPane.add(mobileField, 1, 3);
+        gridPane.add(addressLabel, 0, 4); // Add address label
+        gridPane.add(addressField, 1, 4); // Add address field
+
+        newUserDialog.getDialogPane().setContent(gridPane);
+
+        // Add buttons for registration and cancellation
+        ButtonType registerButtonType = new ButtonType("Register", ButtonBar.ButtonData.OK_DONE);
+        newUserDialog.getDialogPane().getButtonTypes().addAll(registerButtonType, ButtonType.CANCEL);
+
+        // Enable/disable register button based on text fields' content
+        Node registerButton = newUserDialog.getDialogPane().lookupButton(registerButtonType);
+        registerButton.setDisable(true);
+        nameField.textProperty().addListener((observable, oldValue, newValue) -> {
+            registerButton.setDisable(newValue.trim().isEmpty());
+        });
+        emailField.textProperty().addListener((observable, oldValue, newValue) -> {
+            registerButton.setDisable(newValue.trim().isEmpty());
+        });
+        passwordField.textProperty().addListener((observable, oldValue, newValue) -> {
+            registerButton.setDisable(newValue.trim().isEmpty());
+        });
+        mobileField.textProperty().addListener((observable, oldValue, newValue) -> {
+            registerButton.setDisable(newValue.trim().isEmpty());
+        });
+
+        newUserDialog.setResultConverter(dialogButton -> {
+            if (dialogButton == registerButtonType) {
+                // Get user details from text fields
+                String name = nameField.getText();
+                String email = emailField.getText();
+                String password = passwordField.getText();
+                String mobile = mobileField.getText();
+                String address = addressField.getText();
+
+                // Call addUser method to register the new user
+                Login login = new Login();
+                // Prepend "91" to the mobile number if it's not already present
+                if (mobile.length()!=12) {
+                    mobile = "91" + mobile;
+                }
+                boolean userAdded = login.addUser(name, email, password, mobile, address);
+                if (userAdded)
+                {
+                    loggedInCustomer = login.customerLogin(name, password);
+                    if (loggedInCustomer != null) {
+                        // Display success message box
+                        showAlert(Alert.AlertType.INFORMATION, "User Registration", "User registration successful!");
+                        welcomeLabel.setText("welcome " + loggedInCustomer.getName());
+                        headerBar.getChildren().add(welcomeLabel);
+                        body.getChildren().clear();
+                        body.getChildren().add(productListWithPagination);
+                        footerBar.setVisible(true);
+                    } else {
+                        // Handle the case where login after registration fails
+                        showAlert(Alert.AlertType.ERROR, "Login Error", "Failed to log in after registration. Please try logging in manually.");
+                    }
+                }
+                else
+                {
+                    // Handle the case where user registration fails
+                    showAlert(Alert.AlertType.ERROR, "Registration Error", "Failed to register user.");
+                }
+
+            }
+            return null;
+        });
+        newUserDialog.showAndWait();
+    }
+    private void showAlert(Alert.AlertType alertType, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
 
     private void createHeaderBar()
     {
@@ -256,19 +378,30 @@ public class UserInterface {
             showDialog("No results found.");
         } else {
             // Create pagination for the search results
-            Pagination pagination = new Pagination((searchResults.size() / ITEMS_PER_PAGE) + 1, 0);
-            pagination.setPageFactory(pageIndex -> {
-                int fromIndex = pageIndex * ITEMS_PER_PAGE;
-                int toIndex = Math.min(fromIndex + ITEMS_PER_PAGE, searchResults.size());
-                ObservableList<Product> productsOnPage = FXCollections.observableArrayList(searchResults.subList(fromIndex, toIndex));
-                VBox searchResultPage = productList.createTable(productsOnPage);
-                return searchResultPage;
-            });
-
+            Pagination pagination = getPagination(searchResults);
             // Update the body to display search results with pagination
             body.getChildren().clear();
             body.getChildren().add(pagination);
+            // Create pagination for the search results
+//                  Pagination pagination = new Pagination((searchResults.size() / ITEMS_PER_PAGE) + 1, 0);
+//                  pagination.setPageFactory(pageIndex -> {  int fromIndex = pageIndex * ITEMS_PER_PAGE;
+//                  int toIndex = Math.min(fromIndex + ITEMS_PER_PAGE, searchResults.size());
+//                  ObservableList<Product> productsOnPage = FXCollections.observableArrayList(searchResults.subList(fromIndex, toIndex));
+//                  VBox searchResultPage = productList.createTable(productsOnPage);
+//                  return searchResultPage;});
         }
+    }
+    private Pagination getPagination(ObservableList<Product> searchResults)
+    {
+        Pagination pagination = new Pagination((searchResults.size() / ITEMS_PER_PAGE) + 1, 0);
+        pagination.setPageFactory(pageIndex -> {
+            int fromIndex = pageIndex * ITEMS_PER_PAGE;
+            int toIndex = Math.min(fromIndex + ITEMS_PER_PAGE, searchResults.size());
+            ObservableList<Product> productsOnPage = FXCollections.observableArrayList(searchResults.subList(fromIndex, toIndex));
+            VBox searchResultPage = productList.createTable(productsOnPage);
+            return searchResultPage;
+        });
+        return pagination;
     }
 
     private void createFooterBar()
@@ -288,7 +421,8 @@ public class UserInterface {
                 Product product= productList.getSelectedProduct();
                 if(loggedInCustomer==null)
                 {
-                    showDialog("Please LOGIN to place an order");
+                    showDialog("Please SIGN-IN to place an order");  // *&^ here
+//                    showDialog("Please LOGIN to place an order");
                     return;
                 }
                 if(product==null)
@@ -315,7 +449,8 @@ public class UserInterface {
                 Product product= productList.getSelectedProduct();
                 if(loggedInCustomer==null)
                 {
-                    showDialog("Please LOGIN to add to cart");
+                    showDialog("Please SIGN-IN to add to cart");  // *&^ here
+//                    showDialog("Please LOGIN to add to cart");
                     return;
                 }
                 if(product==null)
