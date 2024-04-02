@@ -1,24 +1,22 @@
 package com.example.ecommerce;
 
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import java.sql.ResultSet;
 
 public class Product
 { //step1:Simple__
-    private final SimpleIntegerProperty id;
-    private final SimpleDoubleProperty price;
-    private final SimpleStringProperty name;
-    //step2: constructor
-    public Product(int id, String name, double price)
-    {
+    private final IntegerProperty id;
+    private final StringProperty name;
+    private final DoubleProperty price;
+
+    public Product(int id, String name, double price) {
         this.id = new SimpleIntegerProperty(id);
-        this.name =new SimpleStringProperty(name);
-        this.price =new SimpleDoubleProperty(price);
+        this.name = new SimpleStringProperty(name);
+        this.price = new SimpleDoubleProperty(price);
     }
+
     //step3: getters
     public static ObservableList<Product> getAllProducts()
     {
@@ -47,15 +45,42 @@ public class Product
         return null;
     }
 
-    public int getId() {
+    public int getId()
+    {
         return id.get();
     }
+    public String getName()
+    {
+        return name.get();
+    }
 
+    public StringProperty nameProperty()
+    {
+        return name;
+    }
+
+    public IntegerProperty idProperty() {
+        return id;
+    }
+//
+//    public void setId(int id) {
+//        this.id.set(id);
+//    }
+
+
+//    public void setName(String name) {
+//        this.name.set(name);
+//    }
+//
     public double getPrice() {
         return price.get();
     }
-
-    public String getName() {
-        return name.get();
+//
+    public DoubleProperty priceProperty() {
+        return price;
     }
+//
+//    public void setPrice(double price) {
+//        this.price.set(price);
+//    }
 }

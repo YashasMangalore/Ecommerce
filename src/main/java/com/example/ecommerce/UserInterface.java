@@ -1,19 +1,20 @@
 package com.example.ecommerce;
 
-import javafx.scene.control.Alert;
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
-import javafx.scene.layout.VBox;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.layout.VBox;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import java.util.List;
 
 public class UserInterface {
     GridPane loginPage;//loginPage variable
@@ -42,10 +43,8 @@ public class UserInterface {
         body = new VBox();
         body.setPadding(new Insets(10));
         body.setAlignment(Pos.CENTER);
-
         // Create product list with pagination and assign it to productListWithPagination
         productListWithPagination = productList.createTableWithPagination();
-
         if (productListWithPagination != null) {
             // Add product list with pagination to the body
             body.getChildren().add(productListWithPagination);
@@ -54,13 +53,11 @@ public class UserInterface {
             System.err.println("Error: productListWithPagination is null");
             // Optionally, you can log the error or display an error message to the user
         }
-
         // Set body as center of root
         root.setCenter(body);
 
         // Set up footer bar
         root.setBottom(footerBar);
-
         return root;
     }
 
@@ -73,9 +70,8 @@ public class UserInterface {
 
     private void createLoginPage()
     {
-        Text userNameText=new Text("User-Name");
+        Text userNameText=new Text("E-mail");
         Text passwordText=new Text("Password");
-
         //typing text field
         TextField userName=new TextField();//placeholder
         userName.setText("user@gmail.com");//placeholder
@@ -89,7 +85,6 @@ public class UserInterface {
         Button loginButton=new Button("Login");
 
         loginPage=new GridPane();
-
 //        loginPage.setStyle("-fx-background-color: lightgrey");
         loginPage.setAlignment(Pos.CENTER);
         loginPage.setHgap(10);
@@ -108,13 +103,13 @@ public class UserInterface {
             @Override
             public void handle(ActionEvent actionEvent)
             {
-                String name=userName.getText();
+                String email=userName.getText();
                 String pass=password.getText();
                 Login login =new Login();
-                loggedInCustomer=login.customerLogin(name,pass);
+                loggedInCustomer=login.customerLogin(email,pass);
                 if(loggedInCustomer!=null)
                 {
-                    messageLabel.setText("Welcome : "+loggedInCustomer.getName());
+                    //messageLabel.setText("Welcome : "+loggedInCustomer.getName());
                     welcomeLabel.setText("welcome "+loggedInCustomer.getName());
                     headerBar.getChildren().add(welcomeLabel);
                     body.getChildren().clear();
@@ -128,10 +123,8 @@ public class UserInterface {
                 }
             }
         });
-
         // New user button
         Button newUserButton = new Button("New User");
-
         newUserButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -140,7 +133,6 @@ public class UserInterface {
                 showNewUserRegistrationDialog();
             }
         });
-
         // Add the new user button to the login page
         loginPage.add(newUserButton, 1, 3);
     }
@@ -157,10 +149,10 @@ public class UserInterface {
         TextField addressField = new TextField(); // Address field added
 
         // Create labels for text fields
-        Label nameLabel = new Label("Name:");
-        Label emailLabel = new Label("Email:");
-        Label passwordLabel = new Label("Password:");
-        Label mobileLabel = new Label("Mobile:");
+        Label nameLabel = new Label("Name*:");
+        Label emailLabel = new Label("Email*:");
+        Label passwordLabel = new Label("Password*:");
+        Label mobileLabel = new Label("Mobile*:");
         Label addressLabel = new Label("Address (Optional):"); // Address label added
 
         // Add labels and text fields to the dialog
@@ -216,7 +208,7 @@ public class UserInterface {
                 boolean userAdded = login.addUser(name, email, password, mobile, address);
                 if (userAdded)
                 {
-                    loggedInCustomer = login.customerLogin(name, password);
+                    loggedInCustomer = login.customerLogin(email, password);
                     if (loggedInCustomer != null) {
                         // Display success message box
                         showAlert(Alert.AlertType.INFORMATION, "User Registration", "User registration successful!");
@@ -225,7 +217,9 @@ public class UserInterface {
                         body.getChildren().clear();
                         body.getChildren().add(productListWithPagination);
                         footerBar.setVisible(true);
-                    } else {
+                    }
+                    else
+                    {
                         // Handle the case where login after registration fails
                         showAlert(Alert.AlertType.ERROR, "Login Error", "Failed to log in after registration. Please try logging in manually.");
                     }
@@ -233,6 +227,7 @@ public class UserInterface {
                 else
                 {
                     // Handle the case where user registration fails
+                    loggedInCustomer = null;
                     showAlert(Alert.AlertType.ERROR, "Registration Error", "Failed to register user.");
                 }
 
@@ -241,14 +236,6 @@ public class UserInterface {
         });
         newUserDialog.showAndWait();
     }
-    private void showAlert(Alert.AlertType alertType, String title, String message) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
 
     private void createHeaderBar()
     {
@@ -263,22 +250,19 @@ public class UserInterface {
         TextField searchBar=new TextField();
         searchBar.setPromptText("Search here");
         searchBar.setPrefWidth(220);
-
-//        Button searchButton=new Button("Search");
         Button searchButton = new Button("Search");
         searchButton.setOnAction(event -> performSearch(searchBar.getText()));
         
         signInButton=new Button("Sign In");
         welcomeLabel = new Label();
-
         Button cartButton=new Button("Cart");
-        //Button orderButton=new Button("Orders");
+        Button orderButton=new Button("Orders");
 
         headerBar=new HBox();//also can directly -- headerBar=new HBox(10);
         headerBar.setPadding(new Insets(10));
         headerBar.setSpacing(10);
         headerBar.setAlignment(Pos.CENTER);
-        headerBar.getChildren().addAll(homeButton,searchBar,searchButton,signInButton,cartButton);
+        headerBar.getChildren().addAll(homeButton,searchBar,searchButton,cartButton,orderButton,signInButton);
 
         signInButton.setOnAction(new EventHandler<>() {
             @Override
@@ -299,9 +283,42 @@ public class UserInterface {
                 prodPage.setPadding(new Insets(1));
                 prodPage.setAlignment(Pos.CENTER);
                 prodPage.setSpacing(10);
-                prodPage.getChildren().add(placeOrderButton);
+                if(loggedInCustomer!=null && !itemsInCart.isEmpty())
+                    prodPage.getChildren().add(placeOrderButton);
                 body.getChildren().add(prodPage);
+                if (loggedInCustomer == null && !headerBar.getChildren().contains(signInButton)) {
+                    headerBar.getChildren().add(signInButton);
+                }
                 footerBar.setVisible(false);//makes it invisible
+            }
+        });
+
+        orderButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent)
+            {
+                List<Order> orders = Order.getAllOrdersForCustomer(loggedInCustomer); // Fetch orders
+                if (loggedInCustomer != null && !orders.isEmpty()) {
+                    body.getChildren().clear();
+                    VBox orderPage = Order.getOrdersPlaced(15,orders); // Pass orders to the method
+                    orderPage.setPadding(new Insets(1));
+                    orderPage.setAlignment(Pos.CENTER);
+                    orderPage.setSpacing(10);
+                    body.getChildren().add(orderPage);
+                    if (loggedInCustomer == null && !headerBar.getChildren().contains(signInButton)) {
+                        headerBar.getChildren().add(signInButton);
+                    }
+                    footerBar.setVisible(false);
+                }
+                else {
+                    body.getChildren().clear();
+                    VBox prodPage = productList.getProductsInCart(null);
+                    prodPage.setPadding(new Insets(1));
+                    prodPage.setAlignment(Pos.CENTER);
+                    prodPage.setSpacing(10);
+                    body.getChildren().add(prodPage);
+                    footerBar.setVisible(false);//makes it invisible
+                }
             }
         });
 
@@ -316,7 +333,7 @@ public class UserInterface {
                 }
                 if(loggedInCustomer==null)
                 {
-                    showDialog("Please LOGIN to place an order");
+                    showDialog("Please SIGN-IN to place an order");
                     return;
                 }
                 int count = Order.placeMultipleOrder(loggedInCustomer,itemsInCart);
@@ -325,7 +342,7 @@ public class UserInterface {
                     showDialog("Order for "+count+" products is placed successfully!");
                     itemsInCart.clear(); // Clear the cart
                     body.getChildren().clear();
-//                    body.getChildren().add(productPage);
+//                  body.getChildren().add(productPage); --without pagination
                     body.getChildren().add(productListWithPagination);
                     footerBar.setVisible(true);
                     if(loggedInCustomer==null && !headerBar.getChildren().contains(signInButton))
@@ -345,23 +362,26 @@ public class UserInterface {
             public void handle(ActionEvent actionEvent) {
                 if (body != null) {
                     body.getChildren().clear();
-                    if (productListWithPagination != null) {
+                    if (productListWithPagination != null)
+                    {
                         body.getChildren().add(productListWithPagination);
-                    } else {
+                    }
+                    else
+                    {
                         System.err.println("Error: productListWithPagination is null");
                         // Optionally, you can log the error or display an error message to the user
                     }
+
                     footerBar.setVisible(true);
                     if (loggedInCustomer == null && !headerBar.getChildren().contains(signInButton)) {
                         headerBar.getChildren().add(signInButton);
                     }
-                } else {
+                } else
+                {
                     System.err.println("Error: Body VBox is null");
-                    // Optionally, you can log the error or display an error message to the user
                 }
             }
         });
-
     }
 
     private void performSearch(String searchQuery)
@@ -382,15 +402,13 @@ public class UserInterface {
             // Update the body to display search results with pagination
             body.getChildren().clear();
             body.getChildren().add(pagination);
-            // Create pagination for the search results
-//                  Pagination pagination = new Pagination((searchResults.size() / ITEMS_PER_PAGE) + 1, 0);
-//                  pagination.setPageFactory(pageIndex -> {  int fromIndex = pageIndex * ITEMS_PER_PAGE;
-//                  int toIndex = Math.min(fromIndex + ITEMS_PER_PAGE, searchResults.size());
-//                  ObservableList<Product> productsOnPage = FXCollections.observableArrayList(searchResults.subList(fromIndex, toIndex));
-//                  VBox searchResultPage = productList.createTable(productsOnPage);
-//                  return searchResultPage;});
+            footerBar.setVisible(true);
+            if (loggedInCustomer == null && !headerBar.getChildren().contains(signInButton)) {
+                headerBar.getChildren().add(signInButton);
+            }
         }
     }
+
     private Pagination getPagination(ObservableList<Product> searchResults)
     {
         Pagination pagination = new Pagination((searchResults.size() / ITEMS_PER_PAGE) + 1, 0);
@@ -417,12 +435,12 @@ public class UserInterface {
 
         buyNowButton.setOnAction(new EventHandler<>() {
             @Override
-            public void handle(ActionEvent actionEvent) {
+            public void handle(ActionEvent actionEvent)
+            {
                 Product product= productList.getSelectedProduct();
                 if(loggedInCustomer==null)
                 {
-                    showDialog("Please SIGN-IN to place an order");  // *&^ here
-//                    showDialog("Please LOGIN to place an order");
+                    showDialog("Please SIGN-IN to place an order");
                     return;
                 }
                 if(product==null)
@@ -449,8 +467,7 @@ public class UserInterface {
                 Product product= productList.getSelectedProduct();
                 if(loggedInCustomer==null)
                 {
-                    showDialog("Please SIGN-IN to add to cart");  // *&^ here
-//                    showDialog("Please LOGIN to add to cart");
+                    showDialog("Please SIGN-IN to add to cart");
                     return;
                 }
                 if(product==null)
@@ -464,9 +481,16 @@ public class UserInterface {
         });
     }
 
-    private void showDialog(String message)
+    private void showAlert(Alert.AlertType alertType, String title, String message)
     {
-//      Alert alert=new Alert(Alert.AlertType.WARNING);
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+    private void showDialog(String message)
+    {//Alert alert=new Alert(Alert.AlertType.WARNING);
         Alert alert=new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(null);
         alert.setContentText(message);
@@ -476,7 +500,6 @@ public class UserInterface {
 }
 
 //OLD code without pagination
-
 //    public BorderPane createContent()
 //    {
 //        BorderPane root=new BorderPane();
@@ -484,15 +507,12 @@ public class UserInterface {
 //        //root.getChildren().add(loginPage);//method to add nodes as children to pane but now were using borderpane so not used
 //        root.setTop(headerBar);
 //        // root.setCenter(loginPage);
-//
 //        body=new VBox();
 //        body.setPadding(new Insets(10));
 //        body.setAlignment(Pos.CENTER);
-//
 //        root.setCenter(body);
 //        productPage=productList.getAllProducts();
 //        body.getChildren().add(productPage);
-//
 //        root.setBottom(footerBar);
 //        return root;
 //    }

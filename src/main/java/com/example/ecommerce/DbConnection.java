@@ -1,12 +1,21 @@
 package com.example.ecommerce;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 
 public class DbConnection
 {
     private final String dbUrl="jdbc:mysql://localhost:3306/ecommerce";
     private final String userName="root";
     private final String password="Bajal123";
+
+    public PreparedStatement prepareStatement(String query) throws SQLException {
+        return getConnection().prepareStatement(query);
+    }
 
     private Statement getStatement() // to get
     {
@@ -35,7 +44,6 @@ public class DbConnection
         }
         return null;
     }
-
     public int updateDataBase(String query)
     {
         try
@@ -63,4 +71,33 @@ public class DbConnection
             System.out.println("Connection failed");
         }
     }
+
+    private Connection connection;
+
+    public DbConnection()
+    {
+        try
+        {
+            // Initialize the database connection
+            connection = DriverManager.getConnection(dbUrl, userName, password);
+        } catch (SQLException e) {
+            // Handle connection errors
+            e.printStackTrace();
+        }
+    }
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public void close() {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                // Handle closure errors
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

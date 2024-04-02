@@ -20,13 +20,13 @@ public class Customer
         return name;
     }
 
-    public String getEmail()
-    {
-        return email;
-    }
-
-    public String getMobile()
-    {
-        return mobile;
-    }
+//    public String getEmail()
+//    {
+//        return email;
+//    }
+//
+//    public String getMobile()
+//    {
+//        return mobile;
+//    }
 }

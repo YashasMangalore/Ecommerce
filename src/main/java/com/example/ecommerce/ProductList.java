@@ -106,7 +106,6 @@ public class ProductList
 //      pagination.setPadding(new Insets(15));
         VBox vBox = new VBox();
         vBox.getChildren().addAll(pagination);
-
         return vBox;
     }
 }
